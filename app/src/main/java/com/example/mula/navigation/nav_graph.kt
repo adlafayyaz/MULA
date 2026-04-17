@@ -67,26 +67,46 @@ fun MulaNavGraph(
         composable(
             route = ROUTE_CATALOG_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ORDER_METHOD) { type = NavType.StringType })
-        ) { CatalogScreenRoute() }
+        ) { back_stack_entry ->
+            CatalogScreenRoute(
+                order_method = back_stack_entry.arguments?.getString(ARG_ORDER_METHOD).orEmpty()
+            )
+        }
         composable(
             route = ROUTE_STORE_SELECTION_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ORDER_METHOD) { type = NavType.StringType })
-        ) { StoreSelectionScreenRoute() }
+        ) { back_stack_entry ->
+            StoreSelectionScreenRoute(
+                order_method = back_stack_entry.arguments?.getString(ARG_ORDER_METHOD).orEmpty()
+            )
+        }
         composable(
             route = ROUTE_PRODUCT_DETAIL_WITH_ARGS,
             arguments = listOf(navArgument(ARG_PRODUCT_ID) { type = NavType.StringType })
-        ) { ProductDetailScreenRoute() }
+        ) { back_stack_entry ->
+            ProductDetailScreenRoute(
+                product_id = back_stack_entry.arguments?.getString(ARG_PRODUCT_ID).orEmpty()
+            )
+        }
         composable(
             route = ROUTE_CHECKOUT_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ORDER_METHOD) { type = NavType.StringType })
-        ) { CheckoutScreenRoute() }
+        ) { back_stack_entry ->
+            CheckoutScreenRoute(
+                order_method = back_stack_entry.arguments?.getString(ARG_ORDER_METHOD).orEmpty()
+            )
+        }
         composable(ROUTE_ORDER_METHOD_SHEET) { OrderMethodSheetScreenRoute() }
         composable(ROUTE_LOCATION_PICKER) { LocationPickerScreenRoute() }
         composable(ROUTE_PAYMENT_METHOD) { PaymentMethodScreenRoute() }
         composable(
             route = ROUTE_QRIS_PAYMENT_WITH_ARGS,
             arguments = listOf(navArgument(ARG_PAYMENT_ID) { type = NavType.StringType })
-        ) { QrisPaymentScreenRoute() }
+        ) { back_stack_entry ->
+            QrisPaymentScreenRoute(
+                payment_id = back_stack_entry.arguments?.getString(ARG_PAYMENT_ID).orEmpty()
+            )
+        }
         composable(
             route = ROUTE_VOUCHER_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ENTRY_SOURCE) { type = NavType.StringType })
@@ -99,19 +119,35 @@ fun MulaNavGraph(
         composable(
             route = ROUTE_ORDER_HISTORY_SUCCESS_DETAIL_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ORDER_ID) { type = NavType.StringType })
-        ) { OrderHistorySuccessDetailScreenRoute() }
+        ) { back_stack_entry ->
+            OrderHistorySuccessDetailScreenRoute(
+                order_id = back_stack_entry.arguments?.getString(ARG_ORDER_ID).orEmpty()
+            )
+        }
         composable(
             route = ROUTE_ORDER_HISTORY_FAILED_DETAIL_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ORDER_ID) { type = NavType.StringType })
-        ) { OrderHistoryFailedDetailScreenRoute() }
+        ) { back_stack_entry ->
+            OrderHistoryFailedDetailScreenRoute(
+                order_id = back_stack_entry.arguments?.getString(ARG_ORDER_ID).orEmpty()
+            )
+        }
         composable(
             route = ROUTE_ORDER_STATUS_PICKUP_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ORDER_ID) { type = NavType.StringType })
-        ) { OrderStatusPickupScreenRoute() }
+        ) { back_stack_entry ->
+            OrderStatusPickupScreenRoute(
+                order_id = back_stack_entry.arguments?.getString(ARG_ORDER_ID).orEmpty()
+            )
+        }
         composable(
             route = ROUTE_ORDER_STATUS_DELIVERY_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ORDER_ID) { type = NavType.StringType })
-        ) { OrderStatusDeliveryScreenRoute() }
+        ) { back_stack_entry ->
+            OrderStatusDeliveryScreenRoute(
+                order_id = back_stack_entry.arguments?.getString(ARG_ORDER_ID).orEmpty()
+            )
+        }
         composable(ROUTE_PROFILE) { ProfileScreenRoute() }
     }
 }
