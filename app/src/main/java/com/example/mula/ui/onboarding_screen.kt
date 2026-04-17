@@ -1,5 +1,6 @@
 package com.example.mula.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -41,15 +43,28 @@ data class OnboardingScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun OnboardingScreenRoute(viewModel: OnboardingViewModel = viewModel()) {
-    OnboardingScreen(state = viewModel.state) { viewModel.on_event(OnboardingScreenEvent.RetryRequested) }
+fun OnboardingScreenRoute(
+    on_finish: () -> Unit = {},
+    viewModel: OnboardingViewModel = viewModel()
+) {
+    OnboardingScreen(
+        state = OnboardingScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_finish = on_finish
+    ) {
+        viewModel.on_event(OnboardingScreenEvent.OnNavigationHandled)
+    }
 }
 
 @Composable
 fun OnboardingScreen(
     state: OnboardingScreenState,
+    on_finish: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     var current_page by rememberSaveable { mutableIntStateOf(0) }
     val pages = listOf(
         Triple("Selamat Datang!", stringResource(R.string.onboarding_page_1_description), "Onboarding 1"),
@@ -60,6 +75,11 @@ fun OnboardingScreen(
         )
     )
     val page = pages[current_page]
+
+    BackHandler {
+        if (current_page == 0) (context as? android.app.Activity)?.finish()
+        else current_page = 0
+    }
 
     Stage4ABackground(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -127,7 +147,7 @@ fun OnboardingScreen(
                 } else {
                     PrimaryButton(
                         text = stringResource(R.string.onboarding_final_action),
-                        on_click = onRetry,
+                        on_click = on_finish,
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("onboarding_primary_button")

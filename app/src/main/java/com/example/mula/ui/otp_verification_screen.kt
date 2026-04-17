@@ -43,18 +43,27 @@ data class OtpVerificationScreenState(
 @Composable
 fun OtpVerificationScreenRoute(
     phone_number: String = "+62 813-7783-6098",
+    on_verified: () -> Unit = {},
+    on_resend: () -> Unit = {},
     viewModel: OtpVerificationViewModel = viewModel()
 ) {
     OtpVerificationScreen(
-        state = viewModel.state,
-        phone_number = if (phone_number.isBlank()) "+62 813-7783-6098" else phone_number
-    ) { viewModel.on_event(OtpVerificationScreenEvent.RetryRequested) }
+        state = OtpVerificationScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        phone_number = if (phone_number.isBlank()) "+62 813-7783-6098" else phone_number,
+        on_verified = on_verified,
+        on_resend = on_resend
+    ) { viewModel.on_event(OtpVerificationScreenEvent.OnErrorMessageDismissed) }
 }
 
 @Composable
 fun OtpVerificationScreen(
     state: OtpVerificationScreenState,
     phone_number: String = "+62 813-7783-6098",
+    on_verified: () -> Unit = {},
+    on_resend: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     val otp_values = remember { mutableStateListOf("", "", "", "") }
@@ -114,10 +123,11 @@ fun OtpVerificationScreen(
             }
             SecondaryTextLink(
                 text = "Tidak menerima kode? Kirim Ulang",
-                on_click = onRetry,
+                on_click = on_resend,
                 modifier = Modifier.testTag("resend_otp_button"),
                 text_align = TextAlign.Center
             )
+            androidx.compose.material3.TextButton(onClick = on_verified) { Text("Lanjut") }
         }
     }
 }

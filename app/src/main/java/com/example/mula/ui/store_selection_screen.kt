@@ -28,11 +28,17 @@ data class StoreSelectionScreenState(
 @Composable
 fun StoreSelectionScreenRoute(
     order_method: String = "delivery",
+    on_back: () -> Unit = {},
+    on_change_method: () -> Unit = {},
+    on_branch_selected: (String) -> Unit = {},
     viewModel: StoreSelectionViewModel = viewModel()
 ) {
     StoreSelectionScreen(
         state = viewModel.state,
-        order_method = if (order_method.isBlank()) "delivery" else order_method
+        order_method = if (order_method.isBlank()) "delivery" else order_method,
+        on_back = on_back,
+        on_change_method = on_change_method,
+        on_branch_selected = on_branch_selected
     ) { viewModel.on_event(StoreSelectionScreenEvent.RetryRequested) }
 }
 
@@ -40,6 +46,9 @@ fun StoreSelectionScreenRoute(
 fun StoreSelectionScreen(
     state: StoreSelectionScreenState,
     order_method: String = "delivery",
+    on_back: () -> Unit = {},
+    on_change_method: () -> Unit = {},
+    on_branch_selected: (String) -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     val method_name = if (order_method == "pickup") "Ambil Sendiri" else "Pesan Antar"
@@ -56,12 +65,12 @@ fun StoreSelectionScreen(
             modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
         ) {
-            item { CommerceScreenHeader(title = "MULA Store") }
+            item { CommerceScreenHeader(title = "MULA Store", on_back_click = on_back) }
             item {
                 MethodSummaryCard(
                     title = method_name,
                     description = method_desc,
-                    on_change_click = onRetry
+                    on_change_click = on_change_method
                 )
             }
             item {
@@ -78,7 +87,8 @@ fun StoreSelectionScreen(
                     address = branch[1],
                     distance = branch[2],
                     status = branch[3],
-                    modifier = Modifier.testTag("branch_list")
+                    modifier = Modifier.testTag("branch_list"),
+                    on_click = { on_branch_selected(branch[0]) }
                 )
             }
         }

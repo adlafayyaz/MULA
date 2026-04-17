@@ -1,6 +1,7 @@
 package com.example.mula.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,11 +43,29 @@ data class CheckoutScreenState(
 @Composable
 fun CheckoutScreenRoute(
     order_method: String = "delivery",
+    selected_branch: String = "MULA Cirendeu",
+    selected_location: String = "Lokasi New Grand Cirendeu Royal",
+    selected_voucher: String = "Pakai voucher untuk lebih hemat",
+    on_back: () -> Unit = {},
+    on_change_method: () -> Unit = {},
+    on_select_branch: () -> Unit = {},
+    on_select_location: () -> Unit = {},
+    on_select_voucher: () -> Unit = {},
+    on_continue_payment: () -> Unit = {},
     viewModel: CheckoutViewModel = viewModel()
 ) {
     CheckoutScreen(
         state = viewModel.state,
-        order_method = if (order_method.isBlank()) "delivery" else order_method
+        order_method = if (order_method.isBlank()) "delivery" else order_method,
+        selected_branch = selected_branch,
+        selected_location = selected_location,
+        selected_voucher = selected_voucher,
+        on_back = on_back,
+        on_change_method = on_change_method,
+        on_select_branch = on_select_branch,
+        on_select_location = on_select_location,
+        on_select_voucher = on_select_voucher,
+        on_continue_payment = on_continue_payment
     ) { viewModel.on_event(CheckoutScreenEvent.RetryRequested) }
 }
 
@@ -54,10 +73,19 @@ fun CheckoutScreenRoute(
 fun CheckoutScreen(
     state: CheckoutScreenState,
     order_method: String = "delivery",
+    selected_branch: String = "MULA Cirendeu",
+    selected_location: String = "Lokasi New Grand Cirendeu Royal",
+    selected_voucher: String = "Pakai voucher untuk lebih hemat",
+    on_back: () -> Unit = {},
+    on_change_method: () -> Unit = {},
+    on_select_branch: () -> Unit = {},
+    on_select_location: () -> Unit = {},
+    on_select_voucher: () -> Unit = {},
+    on_continue_payment: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     val is_delivery = order_method == "delivery"
-    val voucher_text = if (is_delivery) "Pakai voucher untuk lebih hemat" else "MULAi Aja Dulu! Diskon 25%"
+    val voucher_text = selected_voucher
 
     Box(modifier = Modifier.fillMaxSize().background(background_app)) {
         LazyColumn(
@@ -65,11 +93,12 @@ fun CheckoutScreen(
             contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 24.dp, bottom = MulaDimens.checkout_footer_min_height + 36.dp),
             verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
         ) {
-            item { CommerceScreenHeader(title = "Checkout") }
+            item { CommerceScreenHeader(title = "Checkout", on_back_click = on_back) }
             item {
                 MethodSummaryCard(
                     title = if (is_delivery) "Pesan Antar" else "Ambil Sendiri",
-                    description = if (is_delivery) "Segera diantar ke lokasimu" else "Ambil ke toko tanpa antri"
+                    description = if (is_delivery) "Segera diantar ke lokasimu" else "Ambil ke toko tanpa antri",
+                    on_change_click = on_change_method
                 )
             }
             item {
@@ -77,16 +106,16 @@ fun CheckoutScreen(
             }
             item {
                 BranchSelectorCard(
-                    branch_name = "MULA Cirendeu",
+                    branch_name = selected_branch,
                     branch_distance_text = "1,2 km",
-                    on_click = onRetry
+                    on_click = on_select_branch
                 )
             }
             if (is_delivery) {
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(mula_spacing.sm.dp)) {
                         Text("Pengantaran", style = MaterialTheme.typography.titleMedium, color = body_text_color, modifier = Modifier.testTag("delivery_address_section_title_text"))
-                        SurfaceBlock(tag = "delivery_address_text") { LocationRow("Lokasi New Grand Cirendeu Royal") }
+                        SurfaceBlock(tag = "delivery_address_text") { LocationRow(selected_location) }
                     }
                 }
             }
@@ -96,7 +125,7 @@ fun CheckoutScreen(
                 }
             }
             item {
-                SurfaceBlock(tag = "voucher_row") {
+                SurfaceBlock(tag = "voucher_row", modifier = Modifier.clickable(onClick = on_select_voucher)) {
                     DetailMetaRow(left = "Voucher", right = voucher_text)
                 }
             }
@@ -135,7 +164,7 @@ fun CheckoutScreen(
                 }
                 PrimaryButton(
                     text = "Lanjut ke Pembayaran",
-                    on_click = onRetry,
+                    on_click = on_continue_payment,
                     modifier = Modifier.fillMaxWidth().testTag("continue_to_payment_button")
                 )
             }

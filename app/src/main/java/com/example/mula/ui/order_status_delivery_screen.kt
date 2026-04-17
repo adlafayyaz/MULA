@@ -27,9 +27,10 @@ data class OrderStatusDeliveryScreenState(
 @Composable
 fun OrderStatusDeliveryScreenRoute(
     order_id: String = "0001",
+    on_back_home: () -> Unit = {},
     viewModel: OrderStatusDeliveryViewModel = viewModel()
 ) {
-    OrderStatusDeliveryScreen(state = viewModel.state, order_id = order_id) {
+    OrderStatusDeliveryScreen(state = viewModel.state, order_id = order_id, on_back_home = on_back_home) {
         viewModel.on_event(OrderStatusDeliveryScreenEvent.RetryRequested)
     }
 }
@@ -38,6 +39,7 @@ fun OrderStatusDeliveryScreenRoute(
 fun OrderStatusDeliveryScreen(
     state: OrderStatusDeliveryScreenState,
     order_id: String = "0001",
+    on_back_home: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Stage4ABackground(modifier = Modifier.fillMaxSize()) {
@@ -45,7 +47,7 @@ fun OrderStatusDeliveryScreen(
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
         ) {
-            CommerceScreenHeader(title = order_id)
+            CommerceScreenHeader(title = order_id, on_back_click = on_back_home)
             DetailMetaRow("Status:", "Sedang disiapkan")
             MapPlaceholder(label = "Delivery Map", modifier = Modifier.fillMaxWidth().height(220.dp), test_tag = "delivery_map_view")
             DetailMetaRow("Pemesanan via Aplikasi", "11:40")

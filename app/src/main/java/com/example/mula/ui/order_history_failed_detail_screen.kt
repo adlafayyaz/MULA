@@ -28,9 +28,10 @@ data class OrderHistoryFailedDetailScreenState(
 @Composable
 fun OrderHistoryFailedDetailScreenRoute(
     order_id: String = "0001",
+    on_back: () -> Unit = {},
     viewModel: OrderHistoryFailedDetailViewModel = viewModel()
 ) {
-    OrderHistoryFailedDetailScreen(state = viewModel.state, order_id = order_id) {
+    OrderHistoryFailedDetailScreen(state = viewModel.state, order_id = order_id, on_back = on_back) {
         viewModel.on_event(OrderHistoryFailedDetailScreenEvent.RetryRequested)
     }
 }
@@ -39,6 +40,7 @@ fun OrderHistoryFailedDetailScreenRoute(
 fun OrderHistoryFailedDetailScreen(
     state: OrderHistoryFailedDetailScreenState,
     order_id: String = "0001",
+    on_back: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Stage4ABackground(modifier = Modifier.fillMaxSize()) {
@@ -46,7 +48,7 @@ fun OrderHistoryFailedDetailScreen(
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
         ) {
-            CommerceScreenHeader(title = "PEMBELIAN GAGAL")
+            CommerceScreenHeader(title = "PEMBELIAN GAGAL", on_back_click = on_back)
             HorizontalDivider(color = default_divider_color)
             Text("Pesanan anda dibatalkan", style = MaterialTheme.typography.titleMedium, color = body_text_color)
             Text("Maaf, pesanan Anda tidak dapat diproses karena gerai yang Anda pilih sedang tutup selama proses pemesanan berlangsung.", style = MaterialTheme.typography.bodyMedium, color = body_text_color)

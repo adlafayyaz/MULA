@@ -31,13 +31,32 @@ data class OrderHistoryScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun OrderHistoryScreenRoute(viewModel: OrderHistoryViewModel = viewModel()) {
-    OrderHistoryScreen(state = viewModel.state) { viewModel.on_event(OrderHistoryScreenEvent.RetryRequested) }
+fun OrderHistoryScreenRoute(
+    on_success_detail: () -> Unit = {},
+    on_failed_detail: () -> Unit = {},
+    on_reorder: () -> Unit = {},
+    on_tab_selected: (String) -> Unit = {},
+    viewModel: OrderHistoryViewModel = viewModel()
+) {
+    OrderHistoryScreen(
+        state = OrderHistoryScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_success_detail = on_success_detail,
+        on_failed_detail = on_failed_detail,
+        on_reorder = on_reorder,
+        on_tab_selected = on_tab_selected
+    ) { viewModel.on_event(OrderHistoryScreenEvent.OnRetryClicked) }
 }
 
 @Composable
 fun OrderHistoryScreen(
     state: OrderHistoryScreenState,
+    on_success_detail: () -> Unit = {},
+    on_failed_detail: () -> Unit = {},
+    on_reorder: () -> Unit = {},
+    on_tab_selected: (String) -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     val orders = listOf(
@@ -78,15 +97,15 @@ fun OrderHistoryScreen(
                     total_text = order[5],
                     show_failed_badge = order[6].toBoolean(),
                     modifier = Modifier.testTag("order_history_card"),
-                    on_card_click = {},
-                    on_reorder_click = onRetry
+                    on_card_click = if (order[6].toBoolean()) on_failed_detail else on_success_detail,
+                    on_reorder_click = on_reorder
                 )
             }
         }
 
         CustomBottomTabBar(
             selected_tab = order_history_tab_button,
-            on_tab_selected = {},
+            on_tab_selected = on_tab_selected,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = 24.dp, vertical = 16.dp)

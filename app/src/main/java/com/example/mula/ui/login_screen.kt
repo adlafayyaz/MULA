@@ -35,13 +35,29 @@ data class LoginScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun LoginScreenRoute(viewModel: LoginViewModel = viewModel()) {
-    LoginScreen(state = viewModel.state) { viewModel.on_event(LoginScreenEvent.RetryRequested) }
+fun LoginScreenRoute(
+    on_login_success: () -> Unit = {},
+    on_forgot_password: () -> Unit = {},
+    on_register: () -> Unit = {},
+    viewModel: LoginViewModel = viewModel()
+) {
+    LoginScreen(
+        state = LoginScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_login_success = on_login_success,
+        on_forgot_password = on_forgot_password,
+        on_register = on_register
+    ) { viewModel.on_event(LoginScreenEvent.OnErrorMessageDismissed) }
 }
 
 @Composable
 fun LoginScreen(
     state: LoginScreenState,
+    on_login_success: () -> Unit = {},
+    on_forgot_password: () -> Unit = {},
+    on_register: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     var username by rememberSaveable { mutableStateOf("") }
@@ -79,7 +95,7 @@ fun LoginScreen(
             )
             SecondaryTextLink(
                 text = "Lupa kata sandi",
-                on_click = {},
+                on_click = on_forgot_password,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("forgot_password_button"),
@@ -87,14 +103,14 @@ fun LoginScreen(
             )
             PrimaryButton(
                 text = "Masuk",
-                on_click = onRetry,
+                on_click = on_login_success,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("login_button")
             )
             SecondaryTextLink(
                 text = "Belum punya akun? Daftar",
-                on_click = {},
+                on_click = on_register,
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)

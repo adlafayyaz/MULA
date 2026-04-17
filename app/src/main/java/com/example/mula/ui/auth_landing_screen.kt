@@ -31,13 +31,28 @@ data class AuthLandingScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun AuthLandingScreenRoute(viewModel: AuthLandingViewModel = viewModel()) {
-    AuthLandingScreen(state = viewModel.state) { viewModel.on_event(AuthLandingScreenEvent.RetryRequested) }
+fun AuthLandingScreenRoute(
+    on_login: () -> Unit = {},
+    on_register: () -> Unit = {},
+    viewModel: AuthLandingViewModel = viewModel()
+) {
+    AuthLandingScreen(
+        state = AuthLandingScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_login = on_login,
+        on_register = on_register
+    ) {
+        viewModel.on_event(AuthLandingScreenEvent.OnNavigationHandled)
+    }
 }
 
 @Composable
 fun AuthLandingScreen(
     state: AuthLandingScreenState,
+    on_login: () -> Unit = {},
+    on_register: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Stage4ABackground(modifier = Modifier.fillMaxSize()) {
@@ -77,14 +92,14 @@ fun AuthLandingScreen(
             ) {
                 PrimaryButton(
                     text = "Masuk",
-                    on_click = onRetry,
+                    on_click = on_login,
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("login_button")
                 )
                 SecondaryTextLink(
                     text = "Belum punya akun? Daftar",
-                    on_click = {},
+                    on_click = on_register,
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("register_link_button"),

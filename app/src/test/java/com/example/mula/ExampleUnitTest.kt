@@ -114,17 +114,17 @@ class ExampleUnitTest {
 
     @Test
     fun route_patterns_match_prd() {
-        assertEquals("catalog_screen/{order_method}", ROUTE_CATALOG_WITH_ARGS)
+        assertEquals("catalog_screen?order_method={order_method}", ROUTE_CATALOG_WITH_ARGS)
         assertEquals("store_selection_screen/{order_method}", ROUTE_STORE_SELECTION_WITH_ARGS)
         assertEquals("product_detail_screen/{product_id}", ROUTE_PRODUCT_DETAIL_WITH_ARGS)
-        assertEquals("checkout_screen/{order_method}", ROUTE_CHECKOUT_WITH_ARGS)
+        assertEquals("checkout_screen?order_method={order_method}", ROUTE_CHECKOUT_WITH_ARGS)
         assertEquals("otp_verification_screen/{phone_number}", ROUTE_OTP_VERIFICATION_WITH_ARGS)
-        assertEquals("voucher_screen/{entry_source}", ROUTE_VOUCHER_WITH_ARGS)
+        assertEquals("voucher_screen?entry_source={entry_source}", ROUTE_VOUCHER_WITH_ARGS)
         assertEquals("qris_payment_screen/{payment_id}", ROUTE_QRIS_PAYMENT_WITH_ARGS)
-        assertEquals("order_history_success_detail_screen/{order_id}", ROUTE_ORDER_HISTORY_SUCCESS_DETAIL_WITH_ARGS)
-        assertEquals("order_history_failed_detail_screen/{order_id}", ROUTE_ORDER_HISTORY_FAILED_DETAIL_WITH_ARGS)
-        assertEquals("order_status_pickup_screen/{order_id}", ROUTE_ORDER_STATUS_PICKUP_WITH_ARGS)
-        assertEquals("order_status_delivery_screen/{order_id}", ROUTE_ORDER_STATUS_DELIVERY_WITH_ARGS)
+        assertEquals("order_history_success_detail_screen?order_id={order_id}", ROUTE_ORDER_HISTORY_SUCCESS_DETAIL_WITH_ARGS)
+        assertEquals("order_history_failed_detail_screen?order_id={order_id}", ROUTE_ORDER_HISTORY_FAILED_DETAIL_WITH_ARGS)
+        assertEquals("order_status_pickup_screen?order_id={order_id}", ROUTE_ORDER_STATUS_PICKUP_WITH_ARGS)
+        assertEquals("order_status_delivery_screen?order_id={order_id}", ROUTE_ORDER_STATUS_DELIVERY_WITH_ARGS)
     }
 
     @Test

@@ -44,13 +44,28 @@ data class ProfileScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun ProfileScreenRoute(viewModel: ProfileViewModel = viewModel()) {
-    ProfileScreen(state = viewModel.state) { viewModel.on_event(ProfileScreenEvent.RetryRequested) }
+fun ProfileScreenRoute(
+    on_logout: () -> Unit = {},
+    on_tab_selected: (String) -> Unit = {},
+    viewModel: ProfileViewModel = viewModel()
+) {
+    ProfileScreen(
+        state = ProfileScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_logout = on_logout,
+        on_tab_selected = on_tab_selected
+    ) {
+        viewModel.on_event(ProfileScreenEvent.OnRetryClicked)
+    }
 }
 
 @Composable
 fun ProfileScreen(
     state: ProfileScreenState,
+    on_logout: () -> Unit = {},
+    on_tab_selected: (String) -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Box(
@@ -120,7 +135,7 @@ fun ProfileScreen(
             item {
                 SecondaryTextLink(
                     text = "Keluar",
-                    on_click = onRetry,
+                    on_click = on_logout,
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("logout_button"),
@@ -131,7 +146,7 @@ fun ProfileScreen(
 
         CustomBottomTabBar(
             selected_tab = profile_tab_button,
-            on_tab_selected = {},
+            on_tab_selected = on_tab_selected,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = 24.dp, vertical = 16.dp)

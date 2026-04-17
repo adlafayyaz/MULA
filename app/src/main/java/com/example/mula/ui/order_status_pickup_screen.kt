@@ -1,6 +1,7 @@
 package com.example.mula.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,9 +39,10 @@ data class OrderStatusPickupScreenState(
 @Composable
 fun OrderStatusPickupScreenRoute(
     order_id: String = "0001",
+    on_back_home: () -> Unit = {},
     viewModel: OrderStatusPickupViewModel = viewModel()
 ) {
-    OrderStatusPickupScreen(state = viewModel.state, order_id = order_id) {
+    OrderStatusPickupScreen(state = viewModel.state, order_id = order_id, on_back_home = on_back_home) {
         viewModel.on_event(OrderStatusPickupScreenEvent.RetryRequested)
     }
 }
@@ -49,6 +51,7 @@ fun OrderStatusPickupScreenRoute(
 fun OrderStatusPickupScreen(
     state: OrderStatusPickupScreenState,
     order_id: String = "0001",
+    on_back_home: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     var show_overlay by rememberSaveable { mutableStateOf(true) }
@@ -58,7 +61,7 @@ fun OrderStatusPickupScreen(
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
         ) {
-            CommerceScreenHeader(title = order_id)
+            CommerceScreenHeader(title = order_id, on_back_click = on_back_home)
             SurfaceBlock {
                 Text("Status: Siap Diambil", style = MaterialTheme.typography.titleMedium)
             }
@@ -85,7 +88,8 @@ fun OrderStatusPickupScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(overlay_black_40)
-                    .testTag("fullscreen_qr_overlay"),
+                    .testTag("fullscreen_qr_overlay")
+                    .clickable { show_overlay = false },
                 contentAlignment = Alignment.Center
             ) {
                 androidx.compose.foundation.layout.Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)) {

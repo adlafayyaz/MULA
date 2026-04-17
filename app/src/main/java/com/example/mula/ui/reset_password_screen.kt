@@ -37,13 +37,25 @@ data class ResetPasswordScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun ResetPasswordScreenRoute(viewModel: ResetPasswordViewModel = viewModel()) {
-    ResetPasswordScreen(state = viewModel.state) { viewModel.on_event(ResetPasswordScreenEvent.RetryRequested) }
+fun ResetPasswordScreenRoute(
+    on_success: () -> Unit = {},
+    viewModel: ResetPasswordViewModel = viewModel()
+) {
+    ResetPasswordScreen(
+        state = ResetPasswordScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_success = on_success
+    ) {
+        viewModel.on_event(ResetPasswordScreenEvent.OnErrorMessageDismissed)
+    }
 }
 
 @Composable
 fun ResetPasswordScreen(
     state: ResetPasswordScreenState,
+    on_success: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     var password by rememberSaveable { mutableStateOf("") }
@@ -96,7 +108,7 @@ fun ResetPasswordScreen(
             )
             PrimaryButton(
                 text = stringResource(R.string.reset_password_submit),
-                on_click = onRetry,
+                on_click = on_success,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("save_new_password_button")
