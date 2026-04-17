@@ -48,9 +48,11 @@ data class ProductDetailScreenState(
 @Composable
 fun ProductDetailScreenRoute(
     product_id: String = "creamy_latte",
+    on_back: () -> Unit = {},
+    on_buy: () -> Unit = {},
     viewModel: ProductDetailViewModel = viewModel()
 ) {
-    ProductDetailScreen(state = viewModel.state, product_id = product_id) {
+    ProductDetailScreen(state = viewModel.state, product_id = product_id, on_back = on_back, on_buy = on_buy) {
         viewModel.on_event(ProductDetailScreenEvent.RetryRequested)
     }
 }
@@ -59,6 +61,8 @@ fun ProductDetailScreenRoute(
 fun ProductDetailScreen(
     state: ProductDetailScreenState,
     product_id: String = "creamy_latte",
+    on_back: () -> Unit = {},
+    on_buy: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Box(modifier = Modifier.fillMaxSize().background(background_app)) {
@@ -69,7 +73,8 @@ fun ProductDetailScreen(
         OverlayIconButton(
             modifier = Modifier.align(Alignment.TopStart).padding(24.dp),
             test_tag = "back_button",
-            icon = { BackIconLight() }
+            icon = { BackIconLight() },
+            on_click = on_back
         )
         OverlayIconButton(
             modifier = Modifier.align(Alignment.TopEnd).padding(24.dp),
@@ -142,7 +147,7 @@ fun ProductDetailScreen(
             )
             PrimaryButton(
                 text = "Beli Rp. 22.000",
-                on_click = onRetry,
+                on_click = on_buy,
                 modifier = Modifier.weight(1f).testTag("buy_button")
             )
         }

@@ -33,7 +33,12 @@ data class RewardsScreenState(
 
 @Composable
 fun RewardsScreenRoute(viewModel: RewardsViewModel = viewModel()) {
-    RewardsScreen(state = viewModel.state) { viewModel.on_event(RewardsScreenEvent.RetryRequested) }
+    RewardsScreen(
+        state = RewardsScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        )
+    ) { viewModel.on_event(RewardsScreenEvent.OnRetryClicked) }
 }
 
 @Composable

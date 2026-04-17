@@ -31,9 +31,10 @@ data class OrderHistorySuccessDetailScreenState(
 @Composable
 fun OrderHistorySuccessDetailScreenRoute(
     order_id: String = "0001",
+    on_back: () -> Unit = {},
     viewModel: OrderHistorySuccessDetailViewModel = viewModel()
 ) {
-    OrderHistorySuccessDetailScreen(state = viewModel.state, order_id = order_id) {
+    OrderHistorySuccessDetailScreen(state = viewModel.state, order_id = order_id, on_back = on_back) {
         viewModel.on_event(OrderHistorySuccessDetailScreenEvent.RetryRequested)
     }
 }
@@ -42,6 +43,7 @@ fun OrderHistorySuccessDetailScreenRoute(
 fun OrderHistorySuccessDetailScreen(
     state: OrderHistorySuccessDetailScreenState,
     order_id: String = "0001",
+    on_back: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Stage4ABackground(modifier = Modifier.fillMaxSize()) {
@@ -49,7 +51,7 @@ fun OrderHistorySuccessDetailScreen(
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
         ) {
-            CommerceScreenHeader(title = "PEMBELIAN BERHASIL")
+            CommerceScreenHeader(title = "PEMBELIAN BERHASIL", on_back_click = on_back)
             HorizontalDivider(color = default_divider_color)
             Text("Penilaian", style = MaterialTheme.typography.titleMedium, modifier = Modifier.testTag("rating_section_title_text"))
             RatingStarRow(selected_rating = 5, on_rating_selected = {})

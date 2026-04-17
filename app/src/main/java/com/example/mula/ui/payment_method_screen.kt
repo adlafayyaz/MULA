@@ -1,5 +1,6 @@
 package com.example.mula.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,13 +34,26 @@ data class PaymentMethodScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun PaymentMethodScreenRoute(viewModel: PaymentMethodViewModel = viewModel()) {
-    PaymentMethodScreen(state = viewModel.state) { viewModel.on_event(PaymentMethodScreenEvent.RetryRequested) }
+fun PaymentMethodScreenRoute(
+    on_back: () -> Unit = {},
+    on_payment_selected: (String) -> Unit = {},
+    on_continue: (String) -> Unit = {},
+    viewModel: PaymentMethodViewModel = viewModel()
+) {
+    PaymentMethodScreen(
+        state = viewModel.state,
+        on_back = on_back,
+        on_payment_selected = on_payment_selected,
+        on_continue = on_continue
+    ) { viewModel.on_event(PaymentMethodScreenEvent.RetryRequested) }
 }
 
 @Composable
 fun PaymentMethodScreen(
     state: PaymentMethodScreenState,
+    on_back: () -> Unit = {},
+    on_payment_selected: (String) -> Unit = {},
+    on_continue: (String) -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     var selected by rememberSaveable { mutableStateOf("QRIS") }
@@ -52,13 +66,19 @@ fun PaymentMethodScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
         ) {
-            CommerceScreenHeader(title = "Pilih Pembayaran")
+            CommerceScreenHeader(title = "Pilih Pembayaran", on_back_click = on_back)
             Text("Metode Pembayaran", style = MaterialTheme.typography.titleMedium, color = body_text_color, modifier = Modifier.testTag("payment_method_section_title_text"))
             Text("Pilih metode pembayaranmu", style = MaterialTheme.typography.bodyMedium, color = body_text_color, modifier = Modifier.testTag("payment_method_section_description_text"))
             SurfaceBlock(tag = "payment_method_list") {
-                PaymentOptionRow("QRIS", "Bayar pakai scan QR", selected == "QRIS")
-                PaymentOptionRow("GoPay", "Bayar cepat dari dompet digital", selected == "GoPay")
-                PaymentOptionRow("Tunai", "Bayar langsung di kasir", selected == "Tunai")
+                PaymentOptionRow("QRIS", "Bayar pakai scan QR", selected == "QRIS", modifier = Modifier.clickable {
+                    selected = "QRIS"; on_payment_selected("qris")
+                })
+                PaymentOptionRow("GoPay", "Bayar cepat dari dompet digital", selected == "GoPay", modifier = Modifier.clickable {
+                    selected = "GoPay"; on_payment_selected("gopay")
+                })
+                PaymentOptionRow("Tunai", "Bayar langsung di kasir", selected == "Tunai", modifier = Modifier.clickable {
+                    selected = "Tunai"; on_payment_selected("cash")
+                })
             }
             Text(
                 text = "Kamu tidak dapat melakukan pembatalan atau perubahan apapun pada pemesanan setelah melakukan pembayaran",
@@ -67,7 +87,15 @@ fun PaymentMethodScreen(
             )
             PrimaryButton(
                 text = "Lanjutkan",
-                on_click = onRetry,
+                on_click = {
+                    on_continue(
+                        when (selected) {
+                            "GoPay" -> "gopay"
+                            "Tunai" -> "cash"
+                            else -> "qris"
+                        }
+                    )
+                },
                 modifier = Modifier.fillMaxWidth().testTag("payment_continue_button")
             )
         }

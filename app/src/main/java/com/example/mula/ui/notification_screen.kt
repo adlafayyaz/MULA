@@ -23,7 +23,12 @@ data class NotificationScreenState(
 
 @Composable
 fun NotificationScreenRoute(viewModel: NotificationViewModel = viewModel()) {
-    NotificationScreen(state = viewModel.state) { viewModel.on_event(NotificationScreenEvent.RetryRequested) }
+    NotificationScreen(
+        state = NotificationScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        )
+    ) { viewModel.on_event(NotificationScreenEvent.OnRetryClicked) }
 }
 
 @Composable

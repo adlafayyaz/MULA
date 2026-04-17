@@ -43,13 +43,35 @@ data class HomeScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun HomeScreenRoute(viewModel: HomeViewModel = viewModel()) {
-    HomeScreen(state = viewModel.state) { viewModel.on_event(HomeScreenEvent.RetryRequested) }
+fun HomeScreenRoute(
+    on_notification: () -> Unit = {},
+    on_rewards: () -> Unit = {},
+    on_delivery: () -> Unit = {},
+    on_pickup: () -> Unit = {},
+    on_tab_selected: (String) -> Unit = {},
+    viewModel: HomeViewModel = viewModel()
+) {
+    HomeScreen(
+        state = HomeScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_notification = on_notification,
+        on_rewards = on_rewards,
+        on_delivery = on_delivery,
+        on_pickup = on_pickup,
+        on_tab_selected = on_tab_selected
+    ) { viewModel.on_event(HomeScreenEvent.OnRetryClicked) }
 }
 
 @Composable
 fun HomeScreen(
     state: HomeScreenState,
+    on_notification: () -> Unit = {},
+    on_rewards: () -> Unit = {},
+    on_delivery: () -> Unit = {},
+    on_pickup: () -> Unit = {},
+    on_tab_selected: (String) -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     val promos = listOf(
@@ -98,7 +120,7 @@ fun HomeScreen(
                             modifier = Modifier.testTag("user_name_text")
                         )
                     }
-                    NotificationActionButton(modifier = Modifier.align(Alignment.TopEnd).padding(16.dp))
+                    NotificationActionButton(modifier = Modifier.align(Alignment.TopEnd).padding(16.dp), on_click = on_notification)
                 }
             }
             item {
@@ -108,7 +130,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
                         .testTag("token_balance_card"),
-                    on_button_click = onRetry
+                    on_button_click = on_rewards
                 )
             }
             item {
@@ -122,12 +144,14 @@ fun HomeScreen(
                     ServiceModeCard(
                         text = "Pesan antar",
                         modifier = Modifier.weight(1f),
-                        test_tag = "delivery_mode_card"
+                        test_tag = "delivery_mode_card",
+                        on_click = on_delivery
                     )
                     ServiceModeCard(
                         text = "Ambil Sendiri",
                         modifier = Modifier.weight(1f),
-                        test_tag = "pickup_mode_card"
+                        test_tag = "pickup_mode_card",
+                        on_click = on_pickup
                     )
                 }
             }
@@ -162,7 +186,7 @@ fun HomeScreen(
 
         CustomBottomTabBar(
             selected_tab = home_tab_button,
-            on_tab_selected = {},
+            on_tab_selected = on_tab_selected,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = 24.dp, vertical = 16.dp)

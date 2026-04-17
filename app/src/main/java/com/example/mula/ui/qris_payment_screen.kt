@@ -37,9 +37,11 @@ data class QrisPaymentScreenState(
 @Composable
 fun QrisPaymentScreenRoute(
     payment_id: String = "#2506120001",
+    on_close: () -> Unit = {},
+    on_check_status: () -> Unit = {},
     viewModel: QrisPaymentViewModel = viewModel()
 ) {
-    QrisPaymentScreen(state = viewModel.state, payment_id = payment_id) {
+    QrisPaymentScreen(state = viewModel.state, payment_id = payment_id, on_close = on_close, on_check_status = on_check_status) {
         viewModel.on_event(QrisPaymentScreenEvent.RetryRequested)
     }
 }
@@ -48,6 +50,8 @@ fun QrisPaymentScreenRoute(
 fun QrisPaymentScreen(
     state: QrisPaymentScreenState,
     payment_id: String = "#2506120001",
+    on_close: () -> Unit = {},
+    on_check_status: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Stage4ABackground(modifier = Modifier.fillMaxSize()) {
@@ -56,7 +60,7 @@ fun QrisPaymentScreen(
             verticalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
         ) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                androidx.compose.material3.IconButton(onClick = onRetry, modifier = Modifier.testTag("close_button")) { CloseIcon() }
+                androidx.compose.material3.IconButton(onClick = on_close, modifier = Modifier.testTag("close_button")) { CloseIcon() }
             }
             SurfaceBlock {
                 Text("Invoice : $payment_id", style = MaterialTheme.typography.titleMedium, modifier = Modifier.testTag("invoice_number_text"))
@@ -76,7 +80,7 @@ fun QrisPaymentScreen(
             }
             PrimaryButton(
                 text = "Cek Status Pembayaran",
-                on_click = onRetry,
+                on_click = on_check_status,
                 modifier = Modifier.fillMaxWidth().testTag("check_payment_status_button")
             )
         }

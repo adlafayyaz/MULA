@@ -34,13 +34,26 @@ data class RegisterScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun RegisterScreenRoute(viewModel: RegisterViewModel = viewModel()) {
-    RegisterScreen(state = viewModel.state) { viewModel.on_event(RegisterScreenEvent.RetryRequested) }
+fun RegisterScreenRoute(
+    on_login: () -> Unit = {},
+    on_register_success: () -> Unit = {},
+    viewModel: RegisterViewModel = viewModel()
+) {
+    RegisterScreen(
+        state = RegisterScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_login = on_login,
+        on_register_success = on_register_success
+    ) { viewModel.on_event(RegisterScreenEvent.OnErrorMessageDismissed) }
 }
 
 @Composable
 fun RegisterScreen(
     state: RegisterScreenState,
+    on_login: () -> Unit = {},
+    on_register_success: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     var username by rememberSaveable { mutableStateOf("") }
@@ -89,14 +102,14 @@ fun RegisterScreen(
             )
             PrimaryButton(
                 text = "Daftar",
-                on_click = onRetry,
+                on_click = on_register_success,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("register_button")
             )
             SecondaryTextLink(
                 text = "Sudah punya akun? Masuk",
-                on_click = {},
+                on_click = on_login,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("login_link_button"),

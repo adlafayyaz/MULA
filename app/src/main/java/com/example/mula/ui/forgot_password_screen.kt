@@ -39,13 +39,26 @@ data class ForgotPasswordScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun ForgotPasswordScreenRoute(viewModel: ForgotPasswordViewModel = viewModel()) {
-    ForgotPasswordScreen(state = viewModel.state) { viewModel.on_event(ForgotPasswordScreenEvent.RetryRequested) }
+fun ForgotPasswordScreenRoute(
+    on_submit: (String) -> Unit = {},
+    on_login: () -> Unit = {},
+    viewModel: ForgotPasswordViewModel = viewModel()
+) {
+    ForgotPasswordScreen(
+        state = ForgotPasswordScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        on_submit = on_submit,
+        on_login = on_login
+    ) { viewModel.on_event(ForgotPasswordScreenEvent.OnErrorMessageDismissed) }
 }
 
 @Composable
 fun ForgotPasswordScreen(
     state: ForgotPasswordScreenState,
+    on_submit: (String) -> Unit = {},
+    on_login: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     var phone by rememberSaveable { mutableStateOf("") }
@@ -85,14 +98,14 @@ fun ForgotPasswordScreen(
             )
             PrimaryButton(
                 text = stringResource(R.string.forgot_password_submit),
-                on_click = onRetry,
+                on_click = { on_submit(phone.ifBlank { "+62 813-7783-6098" }) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("forgot_password_submit_button")
             )
             SecondaryTextLink(
                 text = "Ingat kata sandi? Masuk",
-                on_click = {},
+                on_click = on_login,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("login_link_button"),

@@ -33,18 +33,27 @@ data class VoucherScreenState(
 @Composable
 fun VoucherScreenRoute(
     entry_source: String = "tab",
+    on_back: () -> Unit = {},
+    on_voucher_selected: (String) -> Unit = {},
     viewModel: VoucherViewModel = viewModel()
 ) {
     VoucherScreen(
-        state = viewModel.state,
-        entry_source = if (entry_source.isBlank()) "tab" else entry_source
-    ) { viewModel.on_event(VoucherScreenEvent.RetryRequested) }
+        state = VoucherScreenState(
+            is_loading = viewModel.state.is_loading,
+            error_message = viewModel.state.error_message
+        ),
+        entry_source = if (entry_source.isBlank()) "tab" else entry_source,
+        on_back = on_back,
+        on_voucher_selected = on_voucher_selected
+    ) { viewModel.on_event(VoucherScreenEvent.OnRetryClicked) }
 }
 
 @Composable
 fun VoucherScreen(
     state: VoucherScreenState,
     entry_source: String = "tab",
+    on_back: () -> Unit = {},
+    on_voucher_selected: (String) -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     val vouchers = listOf(
@@ -73,7 +82,8 @@ fun VoucherScreen(
             item {
                 ScreenHeaderRow(
                     title = "Voucher",
-                    show_back_button = !show_tab_bar
+                    show_back_button = !show_tab_bar,
+                    on_back_click = on_back
                 )
             }
             items(vouchers) { voucher ->
@@ -83,7 +93,7 @@ fun VoucherScreen(
                     expiry_date_text = "",
                     action_text = "Pakai",
                     modifier = Modifier.testTag("voucher_card"),
-                    on_action_click = onRetry
+                    on_action_click = { on_voucher_selected(voucher.first) }
                 )
             }
         }

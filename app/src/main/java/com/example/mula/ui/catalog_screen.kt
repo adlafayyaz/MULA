@@ -31,11 +31,17 @@ data class CatalogScreenState(
 @Composable
 fun CatalogScreenRoute(
     order_method: String = "delivery",
+    on_back: () -> Unit = {},
+    on_branch: () -> Unit = {},
+    on_product: () -> Unit = {},
     viewModel: CatalogViewModel = viewModel()
 ) {
     CatalogScreen(
         state = viewModel.state,
-        order_method = if (order_method.isBlank()) "delivery" else order_method
+        order_method = if (order_method.isBlank()) "delivery" else order_method,
+        on_back = on_back,
+        on_branch = on_branch,
+        on_product = on_product
     ) { viewModel.on_event(CatalogScreenEvent.RetryRequested) }
 }
 
@@ -43,6 +49,9 @@ fun CatalogScreenRoute(
 fun CatalogScreen(
     state: CatalogScreenState,
     order_method: String = "delivery",
+    on_back: () -> Unit = {},
+    on_branch: () -> Unit = {},
+    on_product: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     val title = if (order_method == "pickup") "Ambil Sendiri" else "Pesan Antar"
@@ -71,7 +80,8 @@ fun CatalogScreen(
                     modifier = Modifier.padding(top = 24.dp, start = 24.dp, end = 24.dp).testTag("catalog_header_container"),
                     show_trailing_action = true,
                     trailing_test_tag = "catalog_search_button",
-                    trailing_icon = { SearchIcon() }
+                    trailing_icon = { SearchIcon() },
+                    on_back_click = on_back
                 )
             }
             item {
@@ -79,7 +89,7 @@ fun CatalogScreen(
                     branch_name = "MULA Cirendeu",
                     branch_distance_text = "1,2 km",
                     modifier = Modifier.padding(horizontal = 24.dp).testTag("selected_branch_card"),
-                    on_click = onRetry
+                    on_click = on_branch
                 )
             }
             categories.forEach { category ->
@@ -96,7 +106,8 @@ fun CatalogScreen(
                         name = item.first,
                         description = item.second,
                         price = item.third,
-                        modifier = Modifier.padding(horizontal = 24.dp)
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        on_click = on_product
                     )
                 }
             }

@@ -127,10 +127,11 @@ fun MenuItemRow(
     name: String,
     description: String,
     price: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    on_click: () -> Unit = {}
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(vertical = mula_spacing.sm.dp).testTag("menu_item_row"),
+        modifier = modifier.fillMaxWidth().clickable(onClick = on_click).padding(vertical = mula_spacing.sm.dp).testTag("menu_item_row"),
         horizontalArrangement = Arrangement.spacedBy(mula_spacing.md.dp)
     ) {
         ArtworkPlaceholder(label = "Drink", modifier = Modifier.size(92.dp), test_tag = "menu_item_image")
@@ -153,9 +154,10 @@ fun BranchListRow(
     address: String,
     distance: String,
     status: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    on_click: () -> Unit = {}
 ) {
-    Column(modifier = modifier.fillMaxWidth().testTag("branch_item_row").padding(vertical = mula_spacing.sm.dp)) {
+    Column(modifier = modifier.fillMaxWidth().clickable(onClick = on_click).testTag("branch_item_row").padding(vertical = mula_spacing.sm.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(area, style = MaterialTheme.typography.titleMedium, color = body_text_color, modifier = Modifier.testTag("branch_area_text"))

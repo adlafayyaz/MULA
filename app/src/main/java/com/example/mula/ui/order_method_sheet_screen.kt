@@ -30,13 +30,23 @@ data class OrderMethodSheetScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun OrderMethodSheetScreenRoute(viewModel: OrderMethodSheetViewModel = viewModel()) {
-    OrderMethodSheetScreen(state = viewModel.state) { viewModel.on_event(OrderMethodSheetScreenEvent.RetryRequested) }
+fun OrderMethodSheetScreenRoute(
+    on_select_delivery: () -> Unit = {},
+    on_select_pickup: () -> Unit = {},
+    viewModel: OrderMethodSheetViewModel = viewModel()
+) {
+    OrderMethodSheetScreen(
+        state = viewModel.state,
+        on_select_delivery = on_select_delivery,
+        on_select_pickup = on_select_pickup
+    ) { viewModel.on_event(OrderMethodSheetScreenEvent.RetryRequested) }
 }
 
 @Composable
 fun OrderMethodSheetScreen(
     state: OrderMethodSheetScreenState,
+    on_select_delivery: () -> Unit = {},
+    on_select_pickup: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Box(modifier = Modifier.fillMaxSize().background(com.example.mula.ui.theme.overlay_gray_40)) {
@@ -59,8 +69,8 @@ fun OrderMethodSheetScreen(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.testTag("order_method_sheet_title_text")
                 )
-                MethodSummaryCard("Pesan Antar", "Segera diantar ke lokasimu")
-                MethodSummaryCard("Ambil Sendiri", "Ambil ke toko tanpa antri")
+                MethodSummaryCard("Pesan Antar", "Segera diantar ke lokasimu", on_change_click = on_select_delivery)
+                MethodSummaryCard("Ambil Sendiri", "Ambil ke toko tanpa antri", on_change_click = on_select_pickup)
             }
         }
     }

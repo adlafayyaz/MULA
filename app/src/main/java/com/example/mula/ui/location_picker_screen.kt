@@ -32,13 +32,21 @@ data class LocationPickerScreenState(
 ) : ScreenStateContract
 
 @Composable
-fun LocationPickerScreenRoute(viewModel: LocationPickerViewModel = viewModel()) {
-    LocationPickerScreen(state = viewModel.state) { viewModel.on_event(LocationPickerScreenEvent.RetryRequested) }
+fun LocationPickerScreenRoute(
+    on_back: () -> Unit = {},
+    on_confirm: (String) -> Unit = {},
+    viewModel: LocationPickerViewModel = viewModel()
+) {
+    LocationPickerScreen(state = viewModel.state, on_back = on_back, on_confirm = on_confirm) {
+        viewModel.on_event(LocationPickerScreenEvent.RetryRequested)
+    }
 }
 
 @Composable
 fun LocationPickerScreen(
     state: LocationPickerScreenState,
+    on_back: () -> Unit = {},
+    on_confirm: (String) -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -51,7 +59,8 @@ fun LocationPickerScreen(
             title = "Pilih Lokasimu",
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(horizontal = 24.dp, vertical = 24.dp)
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            on_back_click = on_back
         )
         SurfaceBlock(
             modifier = Modifier
@@ -78,7 +87,7 @@ fun LocationPickerScreen(
             }
             PrimaryButton(
                 text = "Konfirmasi Lokasi",
-                on_click = onRetry,
+                on_click = { on_confirm("New Grand Cirendeu Royal Residence") },
                 modifier = Modifier.fillMaxWidth().testTag("confirm_location_button")
             )
         }
