@@ -30,9 +30,7 @@ fun PrimaryButton(
 ) {
     Button(
         onClick = on_click,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(MulaDimens.primary_button_height),
+        modifier = modifier.height(MulaDimens.primary_button_height),
         enabled = enabled && !is_loading,
         shape = MulaShapeTokens.pill,
         colors = ButtonDefaults.buttonColors(

@@ -72,7 +72,7 @@ fun CustomBottomTabBar(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "•",
+                        text = "o",
                         style = MaterialTheme.typography.labelLarge,
                         color = if (is_selected) active_tab_text_color else text_on_primary
                     )

@@ -35,7 +35,7 @@ fun TokenBalanceCard(
         horizontalArrangement = Arrangement.spacedBy(mula_spacing.md.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "◉", style = MaterialTheme.typography.headlineMedium, color = body_text_color)
+        Text(text = "o", style = MaterialTheme.typography.headlineMedium, color = body_text_color)
         Column(modifier = Modifier.weight(1f)) {
             Text(text = token_text, style = MaterialTheme.typography.titleLarge, color = body_text_color)
             Text(text = "token_balance", style = MaterialTheme.typography.bodySmall, color = body_text_color)
