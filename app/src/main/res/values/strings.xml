@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MULA</string>
+    <string name="onboarding_page_1_description">Nikmati pengalaman ngopi lebih mudah setiap hari.</string>
+    <string name="onboarding_page_2_description">Temukan promo, voucher, dan reward favoritmu di satu aplikasi.</string>
+    <string name="onboarding_final_action">Mulai Sekarang</string>
+    <string name="forgot_password_submit">Kirim Kode</string>
+    <string name="reset_password_submit">Simpan</string>
 </resources>

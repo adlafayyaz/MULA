@@ -55,7 +55,11 @@ fun MulaNavGraph(
         composable(
             route = ROUTE_OTP_VERIFICATION_WITH_ARGS,
             arguments = listOf(navArgument(ARG_PHONE_NUMBER) { type = NavType.StringType })
-        ) { OtpVerificationScreenRoute() }
+        ) { back_stack_entry ->
+            OtpVerificationScreenRoute(
+                phone_number = back_stack_entry.arguments?.getString(ARG_PHONE_NUMBER).orEmpty()
+            )
+        }
         composable(ROUTE_RESET_PASSWORD) { ResetPasswordScreenRoute() }
         composable(ROUTE_HOME) { HomeScreenRoute() }
         composable(ROUTE_REWARDS) { RewardsScreenRoute() }
@@ -86,7 +90,11 @@ fun MulaNavGraph(
         composable(
             route = ROUTE_VOUCHER_WITH_ARGS,
             arguments = listOf(navArgument(ARG_ENTRY_SOURCE) { type = NavType.StringType })
-        ) { VoucherScreenRoute() }
+        ) { back_stack_entry ->
+            VoucherScreenRoute(
+                entry_source = back_stack_entry.arguments?.getString(ARG_ENTRY_SOURCE).orEmpty()
+            )
+        }
         composable(ROUTE_ORDER_HISTORY) { OrderHistoryScreenRoute() }
         composable(
             route = ROUTE_ORDER_HISTORY_SUCCESS_DETAIL_WITH_ARGS,
